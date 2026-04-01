@@ -1,0 +1,44 @@
+* {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+    
+    #teamsContainer {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tablet optimization */
+@media (min-width: 641px) and (max-width: 1024px) {
+    #teamsContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Smooth animations */
+button {
+    transition: all 0.2s ease;
+    active: {
+        transform: scale(0.95);
+    }
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* Dark mode optimizations */
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
