@@ -1,10 +1,76 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
+* {
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-h1 {
-    color: #333;
+input, textarea, button {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+button {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+table {
+    border-collapse: collapse;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    body {
+        font-size: 14px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+
+    table {
+        font-size: 0.75rem;
+    }
+
+    td {
+        padding: 0.25rem !important;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    table {
+        font-size: 0.875rem;
+    }
+}
+
+/* Scoreboard styling */
+table td {
+    border: 1px solid #4B5563;
+}
+
+table thead tr {
+    background-color: #1F2937;
+}
+
+table tbody tr:nth-child(1) {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+table tbody tr:nth-child(2) {
+    background-color: rgba(34, 197, 94, 0.1);
 }
