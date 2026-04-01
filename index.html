@@ -1,10 +1,159 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Game Changer Baseball</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Changer Baseball Scorekeeping</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <h1>Welcome to Game Changer Baseball</h1>
+<body class="bg-gray-900 text-white">
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-blue-600 to-green-600 p-4 shadow-lg sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-2">
+                    <h1 class="text-3xl font-bold">⚾ Game Changer</h1>
+                    <button id="settingsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded font-bold">⚙️ Settings</button>
+                </div>
+                <div class="flex justify-between items-center text-xl font-bold">
+                    <div id="inningDisplay">Inning: 1</div>
+                    <div id="scoreDisplay" class="text-2xl"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+            <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+                <h2 class="text-2xl font-bold mb-4">Game Settings</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Away Team</label>
+                        <input id="awayTeamInput" type="text" value="Away" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Home Team</label>
+                        <input id="homeTeamInput" type="text" value="Home" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Innings (typically 7 or 9)</label>
+                        <input id="totalInningsInput" type="number" min="3" max="15" value="7" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2">
+                    </div>
+
+                    <button id="applySettingsBtn" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-semibold">Apply Settings</button>
+                    <button id="resetGameBtn" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold">Reset Game</button>
+                    <button id="closeSettingsBtn" class="w-full bg-gray-600 hover:bg-gray-700 py-2 rounded">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <main class="flex-1 p-4">
+            <!-- Scoreboard -->
+            <div class="max-w-6xl mx-auto bg-gray-800 rounded-lg p-4 mb-6 shadow-xl">
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold" id="awayTeamName">Away</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-sm text-gray-400">Score</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold" id="homeTeamName">Home</div>
+                    </div>
+                </div>
+
+                <!-- Inning Scores -->
+                <div class="overflow-x-auto mb-6">
+                    <table class="w-full text-center border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-gray-600">
+                                <td class="px-2 py-2 font-bold text-left w-16">Team</td>
+                                <td id="inningHeader" colspan="7" class="font-bold">Innings</td>
+                                <td class="px-2 py-2 font-bold text-right w-16">R</td>
+                                <td class="px-2 py-2 font-bold text-right w-16">H</td>
+                                <td class="px-2 py-2 font-bold text-right w-16">E</td>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreboardBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Game Status -->
+                <div class="text-center mb-4 text-lg">
+                    <div id="gameStatus" class="font-bold">Away at Bat</div>
+                </div>
+            </div>
+
+            <!-- Team Controls -->
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Away Team Control -->
+                <div class="bg-blue-700 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4" id="awayControlName">Away Team</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button class="score-btn bg-green-600 hover:bg-green-700 py-3 px-4 rounded font-bold text-lg" data-team="away" data-stat="run">+ Run</button>
+                        <button class="score-btn bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded font-bold text-lg" data-team="away" data-stat="hit">+ Hit</button>
+                        <button class="score-btn bg-red-600 hover:bg-red-700 py-3 px-4 rounded font-bold text-lg" data-team="away" data-stat="error">+ Error</button>
+                        <button class="score-btn bg-yellow-600 hover:bg-yellow-700 py-3 px-4 rounded font-bold text-lg" data-team="away" data-stat="out">+ Out</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="awayUndo" class="bg-gray-600 hover:bg-gray-700 py-2 px-4 rounded font-semibold">Undo</button>
+                        <button id="awayEnd" class="bg-purple-600 hover:bg-purple-700 py-2 px-4 rounded font-semibold">End At Bat</button>
+                    </div>
+
+                    <div class="mt-4 bg-blue-800 rounded p-3">
+                        <div class="text-sm text-gray-300">Runs: <span id="awayRuns" class="font-bold text-xl">0</span></div>
+                        <div class="text-sm text-gray-300">Hits: <span id="awayHits" class="font-bold text-xl">0</span></div>
+                        <div class="text-sm text-gray-300">Errors: <span id="awayErrors" class="font-bold text-xl">0</span></div>
+                        <div class="text-sm text-gray-300">Outs: <span id="awayOuts" class="font-bold text-xl">0</span></div>
+                    </div>
+                </div>
+
+                <!-- Home Team Control -->
+                <div class="bg-green-700 rounded-lg p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4" id="homeControlName">Home Team</h2>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button class="score-btn bg-green-600 hover:bg-green-700 py-3 px-4 rounded font-bold text-lg" data-team="home" data-stat="run">+ Run</button>
+                        <button class="score-btn bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded font-bold text-lg" data-team="home" data-stat="hit">+ Hit</button>
+                        <button class="score-btn bg-red-600 hover:bg-red-700 py-3 px-4 rounded font-bold text-lg" data-team="home" data-stat="error">+ Error</button>
+                        <button class="score-btn bg-yellow-600 hover:bg-yellow-700 py-3 px-4 rounded font-bold text-lg" data-team="home" data-stat="out">+ Out</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="homeUndo" class="bg-gray-600 hover:bg-gray-700 py-2 px-4 rounded font-semibold">Undo</button>
+                        <button id="homeEnd" class="bg-purple-600 hover:bg-purple-700 py-2 px-4 rounded font-semibold">End At Bat</button>
+                    </div>
+
+                    <div class="mt-4 bg-green-800 rounded p-3">
+                        <div class="text-sm text-gray-300">Runs: <span id="homeRuns" class="font-bold text-xl">0</span></div>
+                        <div class="text-sm text-gray-300">Hits: <span id="homeHits" class="font-bold text-xl">0</span></div>
+                        <div class="text-sm text-gray-300">Errors: <span id="homeErrors" class="font-bold text-xl">0</span></div>
+                        <div class="text-sm text-gray-300">Outs: <span id="homeOuts" class="font-bold text-xl">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inning Navigation -->
+            <div class="max-w-6xl mx-auto mt-6 flex gap-4 justify-center">
+                <button id="prevInning" class="bg-gray-600 hover:bg-gray-700 py-2 px-6 rounded font-bold">← Previous Inning</button>
+                <button id="nextInning" class="bg-gray-600 hover:bg-gray-700 py-2 px-6 rounded font-bold">Next Inning →</button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 p-4 text-center text-sm text-gray-400 mt-6">
+            <p>Game Changer Baseball Scorekeeping - Mobile Friendly</p>
+        </footer>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
